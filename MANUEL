@@ -1,2 +1,3 @@
-#Le Probleme du Diner Des Philosophes
+# Le Probleme du Diner Des Philosophes
+
 Ce projet vise à développer un simulateur pour le classique problème des philosophes à table, un scénario qui étudie les défis de synchronisation et d'interblocage dans les systèmes d'exploitation. Inspiré par les problèmes de gestion des ressources dans des environnements concurrents, ce projet applique les concepts fondamentaux de la synchronisation des processus, comme ceux présentés dans le contexte des systèmes Linux.
