@@ -1,4 +1,4 @@
-![image](https://github.com/HAMZA-MH25/Dinner_Des_Philosophes_Probleme/assets/172443526/cbd75261-98b0-4c17-b5f3-34ea9c835fbb)# Le Diner Des Philosophes
+# Le Diner Des Philosophes
 
 Ce projet vise à développer une simulation pour le classique problème des philosophes à table, un scénario qui étudie les défis de synchronisation et d'interblocage dans les systèmes d'exploitation. Inspiré par les problèmes de gestion des ressources dans des environnements concurrents, ce projet applique les concepts fondamentaux de la synchronisation des processus, comme ceux présentés dans le contexte des systèmes Linux.
 
