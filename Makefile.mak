@@ -3,11 +3,11 @@ PYTHON = python3
 SCRIPT = Code_source.py
 
 # Target
-.PHONY: all install-deps run clean
+.PHONY: all install run clean
 
-all: install-deps run
+all: install run
 
-install-deps:
+install:
 	@echo "Verifier si Phython 3 existe, sinon l'installer "
 	@if ! command -v $(PYTHON) &> /dev/null; then 
 	echo "Python 3 n'est pas installe. Commençons l'installation.."; 
