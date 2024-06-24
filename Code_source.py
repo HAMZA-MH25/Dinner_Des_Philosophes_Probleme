@@ -101,7 +101,7 @@ class Philosophe(threading.Thread):
     def reset_stats(self): #réinitialiser les statistiques du philosophe
         self.manger_count = 0
         self.total_waiting_time = 0
-"Ensemble des actions lies aux philosophe : "
+
     def stop(self):
         self.running = False
 
