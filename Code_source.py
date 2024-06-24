@@ -10,30 +10,30 @@ from tkinter import Scrollbar
 # Configuration du logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
-class Fourchette(threading.Semaphore):
+class Fourchette(threading.Semaphore): 
     def __init__(self):
         super().__init__(1)
 
 class Philosophe(threading.Thread):
     def __init__(self, nom, gauche, droite, callback, global_semaphore, hunger_threshold=10):
         super().__init__()
-        self.nom = nom
-        self.gauche = gauche
-        self.droite = droite
-        self.global_semaphore = global_semaphore
-        self.manger_count = 0
-        self.total_waiting_time = 0
-        self.callback = callback
-        self.hunger_threshold = hunger_threshold
-        self.running = True
-        self.paused = False
-        self.last_meal_time = time.time()
-        self.speed = 1.0
-        self.forced_action = None
+        self.nom = nom  
+        self.gauche = gauche  
+        self.droite = droite  
+        self.global_semaphore = global_semaphore  # POUR limiter le nombre de philosophes actifs
+        self.manger_count = 0  # Nombre de fois ou le philosophe a mange
+        self.total_waiting_time = 0  # Temps total d'attente pour manger
+        self.callback = callback  # Fonction de rappel pour mettre a jour l'interface graphique
+        self.hunger_threshold = hunger_threshold  # Seuil de faim après le philosophe starve
+        self.running = True  # Indicateur pour l'état d'exécution du thread
+        self.paused = False  # Indicateur pour la pause du thread
+        self.last_meal_time = time.time()  # Heure de la dernièee fois que le philosophe a mange
+        self.speed = 1.0  # Vitesse d'exécution du philosophe
+        self.forced_action = None  # Action force 
 
-    def run(self):            
-        while self.running:
-            if not self.paused:
+    def run(self):   # Methodes pour gerer le comportement du philosophe
+        while self.running: 
+            if not self.paused: # Execute une action forcee si définie
                 if self.forced_action == "prendre":
                     self.prendre_fourchettes()
                     self.forced_action = None
@@ -49,7 +49,7 @@ class Philosophe(threading.Thread):
                 elif self.forced_action == "lacher_fourchettes":
                     self.lacher_fourchettes()
                     self.forced_action = None
-                else:
+                else: # Sinon le philosophe pense
                     self.penser()
                     start_waiting_time = time.time()
                     self.global_semaphore.acquire()
@@ -66,42 +66,42 @@ class Philosophe(threading.Thread):
 
     def penser(self):
         self.callback(self.nom, "pense")
-        time.sleep(random.uniform(1, 3) / self.speed)
-        if time.time() - self.last_meal_time > self.hunger_threshold:
-            self.callback(self.nom, "starve")
+        time.sleep(random.uniform(1, 3) / self.speed) # Attendre un temps
+        if time.time() - self.last_meal_time > self.hunger_threshold: # Verifier si le philosophe a dépasse son seuil de faim
+            self.callback(self.nom, "starve") # Indiquer que le philosophe starve sur l'interface
     
     def quitter_table_avec_fourchettes(self):
-        self.callback(self.nom, "starve_with_forks")
-        self.lacher_fourchettes()
-        self.stop()
+        self.callback(self.nom, "starve_with_forks") #indiquer le starving avec les fourchettes
+        self.lacher_fourchettes() # les lacher
+        self.stop() # arreter l'execution des philosophes
 
     def prendre_fourchettes(self):
         self.callback(self.nom, "attend")
-        self.gauche.acquire()
-        self.droite.acquire()
+        self.gauche.acquire() # prendre la fourchette gauche
+        self.droite.acquire() # prendre celle a droite
 
     def manger(self):
-        self.manger_count += 1
-        self.last_meal_time = time.time()
-        self.callback(self.nom, "mange")
+        self.manger_count += 1 # Incrementer le nombre de fois que le philosophe a mangé
+        self.last_meal_time = time.time() #l'heure de la dernière fois qu'il a mangé
+        self.callback(self.nom, "mange")  
         time.sleep(random.uniform(1, 2) / self.speed)
 
-    def poser_fourchettes(self):
+    def poser_fourchettes(self): #pour poser les deux fourchettes
         self.gauche.release()
         self.droite.release()
         self.callback(self.nom, "pose")
 
-    def get_stats(self):
+    def get_stats(self): #pour obtenir les statistiques du philosophe
         if self.manger_count == 0:
             avg_waiting_time = 0
         else:
             avg_waiting_time = self.total_waiting_time / self.manger_count
         return self.manger_count, avg_waiting_time
 
-    def reset_stats(self):
+    def reset_stats(self): #réinitialiser les statistiques du philosophe
         self.manger_count = 0
         self.total_waiting_time = 0
-
+"Ensemble des actions lies aux philosophe : "
     def stop(self):
         self.running = False
 
@@ -146,7 +146,7 @@ class Philosophe(threading.Thread):
             self.droite.release()
         self.callback(self.nom, "pose")
 
-class Strategie:
+class Strategie: #les solutions a choisir pour eviter les deadlocks
     def __init__(self, table_philosophes):
         self.table_philosophes = table_philosophes
         
@@ -156,30 +156,19 @@ class Strategie:
             time.sleep(0.1)  # Attente courte pour éviter les blocages potentiels
             philo.force_prendre_droite()  # Puis prend la fourchette droite
 
-    def strategie_cas_pair(self):
+    def strategie_cas_pair(self):  # les philosophes aux positions paires prennent d'abord la gauche, les impaires la droite
         for i, philo in enumerate(self.table_philosophes.philosophes):
             if i % 2 == 0:
                 philo.force_prendre_gauche()
-                time.sleep(0.1)  # Attente courte pour éviter les blocages potentiels
+                time.sleep(0.1)  
                 philo.force_prendre_droite()
             else:
                 philo.force_prendre_droite()
-                time.sleep(0.1)  # Attente courte pour éviter les blocages potentiels
+                time.sleep(0.1) 
                 philo.force_prendre_gauche()
-"""               
-    def strategie_par_defaut(self):
-        for philo in self.table_philosophes.philosophes:
-            philo.force_prendre()
-
-    def strategie_asymetrique(self):
-        for philo in self.table_philosophes.philosophes:
-            philo.force_prendre_gauche()
-            time.sleep(0.1)  # Attendre un court moment pour éviter les blocages potentiels
-            philo.force_prendre_droite()
-"""           
-
+                
         
-class TablePhilosophes(tk.Tk):
+class TablePhilosophes(tk.Tk): #Realisation de l'interface graphique : l'ajout des fenetres,bouttons, labels, la table des philosophes..
     def __init__(self, philosophes, strategie_callback):
         super().__init__()
         self.title("Problème des Philosophes à Table")
@@ -264,7 +253,7 @@ class TablePhilosophes(tk.Tk):
             text = self.canvas.create_text(x, y, text=philo.nom)
             self.philo_labels[philo.nom] = (label, text)
             
-            # Fourchette position between philosophers
+            # Fourchette position entre philosophers
             fx, fy = (x + positions[(i+1) % 5][0]) // 2, (y + positions[(i+1) % 5][1]) // 2
             f_label = self.canvas.create_rectangle(fx-5, fy-5, fx+5, fy+5, fill="black")
             self.fourchette_labels[(i, (i+1) % 5)] = f_label
@@ -322,7 +311,7 @@ class TablePhilosophes(tk.Tk):
         ttk.Label(strategy_frame, text="Stratégie:").pack(side=tk.TOP, padx=5, pady=5)
 
         self.strategy_var = tk.StringVar()
-        self.strategy_var.set("par_defaut")  # Par défaut
+        self.strategy_var.set("par_defaut")  
 
         ttk.Radiobutton(strategy_frame, text="Chandy/Misra", variable=self.strategy_var, value="chandy_misra",
                     command=self.changer_strategie).pack(anchor=tk.W, padx=5)
@@ -425,19 +414,11 @@ class TablePhilosophes(tk.Tk):
                 if philo.nom == nom:
                     philo.force_lacher_fourchettes()
                     break
-    """
-    def changer_strategie(self, nouvelle_strategie):
-        if nouvelle_strategie == "par_defaut":
-            self.strategie.strategie_par_defaut()
-        elif nouvelle_strategie == "asymetrique":
-            self.strategie.strategie_asymetrique()
-        else:
-            logging.warning(f"Stratégie inconnue : {nouvelle_strategie}")
-    """
+
     def create_control_buttons(self):
        # Ajouter des boutons pour changer de stratégie
        self.strategy_var = tk.StringVar()
-       self.strategy_var.set("par_defaut")  # Par défaut
+       self.strategy_var.set("par_defaut")  
        strategy_frame = ttk.Frame(self.control_frame)
        strategy_frame.grid(row=0, column=4, padx=5)
 
@@ -460,7 +441,7 @@ class TablePhilosophes(tk.Tk):
 
 def main():
     fourchettes = [Fourchette() for _ in range(5)]
-    global_semaphore = threading.Semaphore(4)  # Limiter à 4 philosophes pour éviter le deadlock
+    global_semaphore = threading.Semaphore(4)  # Limiter à 4 philosophes actifs simultanément pour éviter le deadlock
     philosophes = []
 
     def callback(nom, action):
