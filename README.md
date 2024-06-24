@@ -31,9 +31,23 @@ Maintenant, nous pouvons cloner notre repository contenant les fichiers nécessa
 ```bash
 git clone https://github.com/HAMZA-MH25/Dinner_Des_Philosophes_Probleme.git
 ```
-Ensuite, accéder au répertoire en utilisant la commande : ```cd Dinner_Des_Philosophes_Probleme```
+Ensuite, nous devons accéder au répertoire en utilisant la commande : ```cd Dinner_Des_Philosophes_Probleme```
 
 ## Usage
+
+Une fois que vous avez le projet sur votre machine locale, vous pouvez utiliser le Makefile pour installer les dépendances et exécuter le programme :
+- Pour installer les dépendances et exécuter le script Python, utilisez la commande ```make```. Le compilateur reconnaîtra le Makefile et l'exécutera, en vérifiant la présence de Python 3, pip et tkinter, puis en exécutant le script.
+- Pour exécuter le script Python indépendamment de l'installation des dépendances, utilisez la commande ```make run```.
+- Si vous souhaitez supprimer les fichiers temporaires générés, vous pouvez exécuter la commande ```make clean```. Cette commande supprimera tous les fichiers temporaires sauf le code source.
+
+Voici une illustration : 
+![image](https://github.com/HAMZA-MH25/Dinner_Des_Philosophes_Probleme/assets/172443526/f9b724a3-573f-4782-9c90-2cdfe4ac2ec8)
+![image](https://github.com/HAMZA-MH25/Dinner_Des_Philosophes_Probleme/assets/172443526/f9b724a3-573f-4782-9c90-2cdfe4ac2ec8)
+![Uploading image.png…]()
+![Uploading image.png…]()
+
+
+
 
 
 
